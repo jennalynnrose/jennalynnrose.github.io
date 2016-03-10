@@ -1,4 +1,4 @@
-confirm("What is your favorite outfit/item?")
+
 
 <!-- this script got from www.javascriptfreecode.com-->
      <!-- this script got from KKR-->
