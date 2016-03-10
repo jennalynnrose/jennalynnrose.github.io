@@ -1,78 +1,116 @@
+<!-- this script got from www.javascriptfreecode.com-Coded by: Krishna Eydatoula -->
+<script>
+// Set the number of snowflakes (more than 30 - 40 not recommended)
+var snowmax=35
+
+// Set the colors for the snow. Add as many colors as you like
+var snowcolor=new Array("#aaaacc","#ddddFF","#ccccDD")
+
+// Set the fonts, that create the snowflakes. Add as many fonts as you like
+var snowtype=new Array("Arial Black","Arial Narrow","Times","Comic Sans MS")
+
+// Set the letter that creates your snowflake (recommended:*)
+var snowletter="*"
+
+// Set the speed of sinking (recommended values range from 0.3 to 2)
+var sinkspeed=0.6
+
+// Set the maximal-size of your snowflaxes
+var snowmaxsize=22
+
+// Set the minimal-size of your snowflaxes
+var snowminsize=8
+
+// Set the snowing-zone
+// Set 1 for all-over-snowing, set 2 for left-side-snowing 
+// Set 3 for center-snowing, set 4 for right-side-snowing
+var snowingzone=3
+
+///////////////////////////////////////////////////////////////////////////
+// CONFIGURATION ENDS HERE
+///////////////////////////////////////////////////////////////////////////
 
 
-<!-- this script got from www.javascriptfreecode.com-->
-     <!-- this script got from KKR-->
+// Do not edit below this line
+var snow=new Array()
+var marginbottom
+var marginright
+var timer
+var i_snow=0
+var x_mv=new Array();
+var crds=new Array();
+var lftrght=new Array();
+var browserinfos=navigator.userAgent 
+var ie5=document.all&&document.getElementById&&!browserinfos.match(/Opera/)
+var ns6=document.getElementById&&!document.all
+var opera=browserinfos.match(/Opera/)  
+var browserok=ie5||ns6||opera
 
-<body bgcolor='#000000' >
-<!-- Start of Fireworks -->
-<script language="JavaScript">
-CL=new Array('#ff0000','#00ff00','#ffffff','#ff00ff','#ffa500','#ffff00','#00ff00','#ffffff','#ff00ff')
-CL2=new Array('#ffa500','#00ff00','#FFAAFF','#fff000','#fffffF')
-Xpos=130;
-Ypos=130;
-I='#00ff00';
-C=0;
-S=5;
-H=null;
-W=null;
-Y=null;
-NS4=(document.layers);
-NS6=(document.getElementById&&!document.all);
-IE4=(document.all);
-A=14;
-E=120;
-L=null;
-if (NS4){
-for (i=0; i < A; i++)
-document.write('<LAYER NAME="nsstars'+i+'" TOP=0 LEFT=0 BGCOLOR='+I+' CLIP="0,0,2,2"></LAYER>');
+function randommaker(range) {		
+	rand=Math.floor(range*Math.random())
+    return rand
 }
-if (NS6){
-window.document.body.style.overflow='hidden';
-for (i=0; i < A; i++)
-document.write('<div id="ns6stars'+i+'" style="position:absolute;top:0px;left:0px;height:2px;width:2px;font-size:2px;background:'+I+'"></div>');
+
+function initsnow() {
+	if (ie5 || opera) {
+		marginbottom = document.body.clientHeight
+		marginright = document.body.clientWidth
+	}
+	else if (ns6) {
+		marginbottom = window.innerHeight
+		marginright = window.innerWidth
+	}
+	var snowsizerange=snowmaxsize-snowminsize
+	for (i=0;i<=snowmax;i++) {
+		crds[i] = 0;                      
+    	lftrght[i] = Math.random()*15;         
+    	x_mv[i] = 0.03 + Math.random()/10;
+		snow[i]=document.getElementById("s"+i)
+		snow[i].style.fontFamily=snowtype[randommaker(snowtype.length)]
+		snow[i].size=randommaker(snowsizerange)+snowminsize
+		snow[i].style.fontSize=snow[i].size
+		snow[i].style.color=snowcolor[randommaker(snowcolor.length)]
+		snow[i].sink=sinkspeed*snow[i].size/5
+		if (snowingzone==1) {snow[i].posx=randommaker(marginright-snow[i].size)}
+		if (snowingzone==2) {snow[i].posx=randommaker(marginright/2-snow[i].size)}
+		if (snowingzone==3) {snow[i].posx=randommaker(marginright/2-snow[i].size)+marginright/4}
+		if (snowingzone==4) {snow[i].posx=randommaker(marginright/2-snow[i].size)+marginright/2}
+		snow[i].posy=randommaker(2*marginbottom-marginbottom-2*snow[i].size)
+		snow[i].style.left=snow[i].posx
+		snow[i].style.top=snow[i].posy
+	}
+	movesnow()
 }
-if (IE4){
-document.write('<div id="ie" style="position:absolute;top:0px;left:0px"><div style="position:relative">');
-for (i=0; i < A; i++)
-document.write('<div id="iestars" style="position:absolute;top:0;left:0;width:2px;height:2px;background:'+I+';font-size:2px"></div>');
-document.write('</div></div>');
+
+function movesnow() {
+	for (i=0;i<=snowmax;i++) {
+		crds[i] += x_mv[i];
+		snow[i].posy+=snow[i].sink
+		snow[i].style.left=snow[i].posx+lftrght[i]*Math.sin(crds[i]);
+		snow[i].style.top=snow[i].posy
+		
+		if (snow[i].posy>=marginbottom-2*snow[i].size || parseInt(snow[i].style.left)>(marginright-3*lftrght[i])){
+			if (snowingzone==1) {snow[i].posx=randommaker(marginright-snow[i].size)}
+			if (snowingzone==2) {snow[i].posx=randommaker(marginright/2-snow[i].size)}
+			if (snowingzone==3) {snow[i].posx=randommaker(marginright/2-snow[i].size)+marginright/4}
+			if (snowingzone==4) {snow[i].posx=randommaker(marginright/2-snow[i].size)+marginright/2}
+			snow[i].posy=0
+		}
+	}
+	var timer=setTimeout("movesnow()",50)
 }
-function Fireworks(){
-H=(NS4||NS6)?window.innerHeight:window.document.body.clientHeight;
-W=(NS4||NS6)?window.innerWidth:window.document.body.clientWidth;
-Y=(NS4||NS6)?window.pageYOffset:window.document.body.scrollTop;
-for (i=0; i < A; i++){
-if (IE4)L=iestars[i].style;
-if (NS4)L=document.layers["nsstars"+i];
-if (NS6)L=document.getElementById("ns6stars"+i).style;
-var F = CL[Math.floor(Math.random()*CL.length)];
-var RS=Math.round(Math.random()*2);
-L.top = Ypos + E*Math.sin((C+i*5)/3)*Math.sin(C/100)
-L.left= Xpos + E*Math.cos((C+i*5)/3)*Math.sin(C/100)
-if (C < 110){
- if (NS4){L.bgColor=I;L.clip.width=1;L.clip.height=1}
- if (IE4||document.getElementById)
- {L.background=I;L.width=1;L.height=1;L.fontSize=1}
- }
-else{
- if (NS4){L.bgColor=F;L.clip.width=RS;L.clip.height=RS}
- if (IE4||document.getElementById){L.background=F;L.width=RS;L.height=RS;L.fontSize=RS}
- }
+
+for (i=0;i<=snowmax;i++) {
+	document.write("<span id='s"+i+"' style='position:absolute;top:-"+snowmaxsize+"'>"+snowletter+"</span>")
 }
-if (C > 220){
- C=0;
- var NC = CL2[Math.floor(Math.random()*CL2.length)];
- I=NC;
- E=Math.round(100+Math.random()*90);
- Ypos = E+Math.round(Math.random()*(H-(E*2.2)))+Y;
- Xpos = E+Math.round(Math.random()*(W-(E*2.2)));
+if (browserok) {
+	window.onload=initsnow
 }
-C+=S;
-setTimeout("Fireworks()",10);
-}
-Fireworks();
-// -->
 </script>
-<!-- End of Fireworks -->
+
 
 <font face="Tahoma"><a target="_blank" href="http://www.javascriptfreecode.com/"><span style="font-size: 8pt; text-decoration: none">JavaScript Free Code</span></a></font>
+
+
+
+
